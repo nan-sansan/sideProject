@@ -24,7 +24,7 @@ export default function LoginPage() {
       localStorage.setItem("token", token);
 
       toast.success("User logged in successfully!");
-      router.push("/");
+      router.push("/admin");
     } catch {
       toast.error("登入失敗");
     }
