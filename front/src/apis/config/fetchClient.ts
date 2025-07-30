@@ -1,5 +1,6 @@
-import axios, { AxiosResponse } from "axios";
+import axios from "axios";
 import { BaseResponse } from "@/apis/config/type";
+import { useAuthStore } from "@/stores/authStore";
 
 const baseUrl = "http://localhost:8080";
 const fetchClient = axios.create({
@@ -8,9 +9,11 @@ const fetchClient = axios.create({
 
 fetchClient.interceptors.request.use(
   async (config) => {
-    const token = "";
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
+    if (!config.headers.Authorization) {
+      const { accessToken } = useAuthStore.getState();
+      if (accessToken) {
+        config.headers.Authorization = `Bearer ${accessToken}`;
+      }
     }
     return config;
   },

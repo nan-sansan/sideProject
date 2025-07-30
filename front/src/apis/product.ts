@@ -1,5 +1,6 @@
 import fetchClient from "@/apis/config/fetchClient";
-import { BaseResponse } from "@/apis/config/type";
+import { BaseResponse, ListResponse } from "@/apis/config/type";
+import { Product } from "@/types/product";
 
 export function productAddApi(
   productName: string,
@@ -7,26 +8,23 @@ export function productAddApi(
   category: string,
   price: number,
   quantity: number,
-  mainImage: File,
-  subImages: File[],
 ): Promise<BaseResponse> {
-  const formData = new FormData();
-  formData.append("name", productName);
-  formData.append("description", description);
-  formData.append("category", category);
-  formData.append("price", price.toString());
-  formData.append("quantity", quantity.toString());
-  formData.append("mainImage", mainImage);
-  subImages.forEach((file) => {
-    formData.append("subImages", file);
-  });
-
   return fetchClient({
     method: "POST",
-    url: "public/product/add",
-    data: formData,
-    headers: {
-      "Content-Type": "multipart/form-data",
+    url: "/products",
+    data: {
+      name: productName,
+      description: description,
+      categoryId: 1,
+      price: price,
+      quantity: quantity,
     },
+  });
+}
+
+export function productListApi(): Promise<ListResponse<Product>> {
+  return fetchClient({
+    method: "GET",
+    url: "/products",
   });
 }

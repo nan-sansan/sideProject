@@ -5,6 +5,7 @@ const items = [
   { title: "Project", path: "/admin" },
   { title: "Member", path: "/admin/members" },
   { title: "Order", path: "/admin/orders" },
+  { title: "Category", path: "/admin/categories" },
 ];
 
 export default function Sidebar() {

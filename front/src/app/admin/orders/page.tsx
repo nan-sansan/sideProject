@@ -8,11 +8,12 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import OrderModal from "@/app/admin/_components/OrderModal";
 import { Order, SnapshotItem } from "@/types/orders";
 import { snapshotMapper } from "@/utils/snapshotMapper";
 import { Product } from "@/types/product";
+import { getOrders } from "@/apis/order";
 
 const fakeOrders = [
   {
@@ -76,6 +77,11 @@ const statusMap = {
 };
 
 export default function OrderManagePage() {
+  useEffect(() => {
+    getOrders().then((res) => {
+      console.log(res);
+    });
+  }, []);
   const [orders, setOrders] = useState<Order[]>(fakeOrders);
   const [editing, setEditing] = useState<Order | null>(null);
   const [open, setOpen] = useState(false);

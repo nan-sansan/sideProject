@@ -8,7 +8,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Select,
   SelectContent,
@@ -19,7 +19,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { toast } from "sonner";
-import { productAddApi } from "@/apis/product";
+import { productAddApi, productListApi } from "@/apis/product";
 import { Product } from "@/types/product";
 import EditProductModal from "@/app/admin/_components/EditProductModal";
 import { Input } from "@/components/ui/input";
@@ -33,44 +33,24 @@ export default function ProductManagePage() {
   const [quantity, setQuantity] = useState(0);
   const [main, setMain] = useState<File | null>(null);
   const [photos, setPhotos] = useState<File[]>([]);
+  const [products, setProducts] = useState<Product[]>([]);
 
-  const fakeProducts: Product[] = [
-    {
-      name: "香皂",
-      description: "溫和不刺激，適合日常清潔。",
-      category: "生活用品",
-      price: 120,
-      quantity: 10,
-      main: "/images/soap-main.jpg",
-      photos: ["/images/soap-1.jpg", "/images/soap-2.jpg"],
-    },
-    {
-      name: "馬克杯",
-      description: "陶瓷杯身，質感極佳。",
-      category: "餐具",
-      price: 300,
-      quantity: 20,
-      main: "/images/mug-main.jpg",
-      photos: ["/images/mug-1.jpg", "/images/mug-2.jpg"],
-    },
-  ];
+  const fakeType = new Map<string, string>([
+    ["1", "AA"],
+    ["2", "BB"],
+    ["3", "CC"],
+  ]);
+  fakeType.set("4", "DD");
 
-  const fakeType = ["AA", "BB", "CC"];
   // 新增商品api
   const handleAddProduct = async () => {
     try {
-      if (main === null) {
-        toast.error("未上傳主要圖片");
-        return;
-      }
       const res = await productAddApi(
         name,
         description,
         category,
         price,
         quantity,
-        main,
-        photos,
       );
       if (res.success) {
         toast.success("新增成功");
@@ -81,7 +61,14 @@ export default function ProductManagePage() {
     }
   };
 
-  const [products, setProducts] = useState<Product[]>(fakeProducts);
+  useEffect(() => {
+    productListApi().then((res) => {
+      console.log(res);
+      setProducts(res.content);
+    });
+  }, []);
+
+  // const [products, setProducts] = useState<Product[]>(fakeProducts);
   const [editing, setEditing] = useState<Product | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
 
@@ -145,9 +132,9 @@ export default function ProductManagePage() {
                 <SelectContent>
                   <SelectGroup>
                     <SelectLabel>分類</SelectLabel>
-                    {fakeType.map((item, key) => (
-                      <SelectItem key={key} value={item}>
-                        {item}
+                    {[...fakeType.entries()].map((item, key) => (
+                      <SelectItem key={key} value={item[0]}>
+                        {item[1]}
                       </SelectItem>
                     ))}
                   </SelectGroup>
@@ -189,7 +176,9 @@ export default function ProductManagePage() {
             <TableRow key={key}>
               <TableCell className="w-[100%]">{item.name}</TableCell>
               <TableCell className="w-[100%]">{item.price}</TableCell>
-              <TableCell className="w-[100%]">{item.category}</TableCell>
+              <TableCell className="w-[100%]">
+                {fakeType.get(item.categoryId)}
+              </TableCell>
               <TableCell>{item.description}</TableCell>
               <TableCell className="w-[100%]">{item.quantity}</TableCell>
               <TableCell className="w-[100%]">
