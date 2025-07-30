@@ -45,13 +45,13 @@ export default function ProductManagePage() {
   // 新增商品api
   const handleAddProduct = async () => {
     try {
-      const res = await productAddApi(
-        name,
-        description,
-        category,
-        price,
-        quantity,
-      );
+      const res = await productAddApi({
+        productName: name,
+        description: description,
+        category: category,
+        price: price,
+        quantity: quantity,
+      });
       if (res.success) {
         toast.success("新增成功");
       }

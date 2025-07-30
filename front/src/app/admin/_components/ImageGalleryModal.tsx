@@ -2,9 +2,15 @@ import { useRef, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
+import { inserImageApi } from "@/apis/product";
 
-export default function ImageGalleryModal() {
+export default function ImageGalleryModal({
+  productId,
+}: {
+  productId: string;
+}) {
   const [images, setImages] = useState<string[]>([]);
+  const [imageFiles, setImageFiles] = useState<File[]>([]);
   const [mainImage, setMainImage] = useState<string | null>(null);
   const fileRef = useRef<HTMLInputElement | null>(null);
 
@@ -14,7 +20,9 @@ export default function ImageGalleryModal() {
     const file = files[0];
     const url = URL.createObjectURL(file);
     setImages((prev) => [...prev, url]);
+    setImageFiles((prev) => [...prev, file]);
     if (!mainImage) setMainImage(url);
+    e.target.value = "";
   };
 
   const handleDelete = (index: number) => {
@@ -22,6 +30,31 @@ export default function ImageGalleryModal() {
     setImages(updated);
     if (mainImage === images[index]) {
       setMainImage(updated[0] || null);
+    }
+  };
+
+  const handleUpload = async () => {
+    if (imageFiles.length === 0) {
+      alert("請先選擇圖片");
+      return;
+    }
+
+    try {
+      for (const file of imageFiles) {
+        const formData = new FormData();
+        formData.append("file", file);
+        formData.append("productId", productId);
+        const res = await inserImageApi(formData);
+        console.log(res.content);
+      }
+
+      alert("所有圖片上傳成功");
+      setImages([]);
+      setImageFiles([]);
+      setMainImage(null);
+    } catch (err) {
+      console.error("圖片上傳失敗", err);
+      alert("圖片上傳失敗");
     }
   };
 
@@ -81,6 +114,9 @@ export default function ImageGalleryModal() {
           }}
         >
           選擇檔案
+        </Button>
+        <Button onClick={handleUpload} className="mt-4 bg-green-600 text-white">
+          上傳圖片
         </Button>
       </div>
     </div>

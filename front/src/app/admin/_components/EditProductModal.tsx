@@ -31,7 +31,7 @@ export default function EditProductModal({
       <div className="bg-white p-6 rounded-lg w-[600px] h-[600px] shadow-lg overflow-auto">
         <h2 className="text-lg font-bold mb-4">編輯商品</h2>
         <div className="space-y-3">
-          <ImageGalleryModal />
+          <ImageGalleryModal productId={product!.categoryId} />
           <Input
             className="border p-2 w-full"
             value={temp.name}
