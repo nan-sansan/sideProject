@@ -23,7 +23,7 @@ export const useAuthStore = create<AuthState>()(
           });
         },
         logout: () => {
-          set({ accessToken: null });
+          set({ accessToken: null, refreshToken: null });
         },
       };
     },
