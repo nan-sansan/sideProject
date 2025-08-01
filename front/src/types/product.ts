@@ -1,9 +1,14 @@
 export type Product = {
+  id: string;
   name: string;
   description: string;
   categoryId: string;
   price: number;
   quantity: number;
-  main: string;
-  photos: string[];
+  imageIds: string[];
+};
+
+export type Category = {
+  id: string;
+  name: string;
 };

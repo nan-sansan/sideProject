@@ -2,59 +2,42 @@ import { useRef, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
-import { inserImageApi } from "@/apis/product";
+import { insertImageApi } from "@/apis/product";
 
-export default function ImageGalleryModal({
-  productId,
-}: {
-  productId: string;
-}) {
+type Props = {
+  imgs: string[];
+  onImageFileChange: (files: File[]) => void;
+};
+
+export default function ImageGalleryModal({ imgs, onImageFileChange }: Props) {
   const [images, setImages] = useState<string[]>([]);
   const [imageFiles, setImageFiles] = useState<File[]>([]);
   const [mainImage, setMainImage] = useState<string | null>(null);
   const fileRef = useRef<HTMLInputElement | null>(null);
 
+  // 添加圖片
   const handleAddImage = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files;
-    if (!files) return;
-    const file = files[0];
+    const previewImg = e.target.files;
+    if (!previewImg) return;
+    const file = previewImg[0];
     const url = URL.createObjectURL(file);
-    setImages((prev) => [...prev, url]);
-    setImageFiles((prev) => [...prev, file]);
+
+    const newImages = [...images, url];
+    const newImgFiles = [...imageFiles, file];
+    setImages(newImages);
+    setImageFiles(newImgFiles);
+    onImageFileChange(newImgFiles);
+
     if (!mainImage) setMainImage(url);
     e.target.value = "";
   };
 
+  // 刪除顯示圖片
   const handleDelete = (index: number) => {
     const updated = images.filter((_, i) => i !== index);
     setImages(updated);
     if (mainImage === images[index]) {
       setMainImage(updated[0] || null);
-    }
-  };
-
-  const handleUpload = async () => {
-    if (imageFiles.length === 0) {
-      alert("請先選擇圖片");
-      return;
-    }
-
-    try {
-      for (const file of imageFiles) {
-        const formData = new FormData();
-        formData.append("file", file);
-        formData.append("productId", productId);
-        const res = await inserImageApi(formData);
-        console.log(res.content);
-      }
-
-      alert("所有圖片上傳成功");
-      setImages([]);
-      setImageFiles([]);
-      setMainImage(null);
-    } catch (err) {
-      console.error("圖片上傳失敗", err);
-      alert("圖片上傳失敗");
     }
   };
 
@@ -77,7 +60,7 @@ export default function ImageGalleryModal({
 
       {/* Thumbnail Carousel */}
       <div className="flex gap-2 overflow-x-auto">
-        {images.map((img, idx) => (
+        {[...imgs, ...images].map((img, idx) => (
           <div key={idx} className="relative group">
             <Image
               width={300}
@@ -99,7 +82,7 @@ export default function ImageGalleryModal({
         ))}
       </div>
 
-      {/* Upload Button */}
+      {/*選擇圖片*/}
       <div className="mt-4">
         <Input
           className="hidden"
@@ -114,9 +97,6 @@ export default function ImageGalleryModal({
           }}
         >
           選擇檔案
-        </Button>
-        <Button onClick={handleUpload} className="mt-4 bg-green-600 text-white">
-          上傳圖片
         </Button>
       </div>
     </div>

@@ -19,8 +19,14 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { toast } from "sonner";
-import { productAddApi, productListApi } from "@/apis/product";
-import { Product } from "@/types/product";
+import {
+  deleteProductApi,
+  getCategoriesListApi,
+  productAddApi,
+  productListApi,
+  updateProductApi,
+} from "@/apis/product";
+import { Category, Product } from "@/types/product";
 import EditProductModal from "@/app/admin/_components/EditProductModal";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -34,26 +40,34 @@ export default function ProductManagePage() {
   const [main, setMain] = useState<File | null>(null);
   const [photos, setPhotos] = useState<File[]>([]);
   const [products, setProducts] = useState<Product[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
 
-  const fakeType = new Map<string, string>([
-    ["1", "AA"],
-    ["2", "BB"],
-    ["3", "CC"],
-  ]);
-  fakeType.set("4", "DD");
-
+  // 列表資料請求
+  const loadData = async () => {
+    const res = await productListApi();
+    const categoryItems = await getCategoriesListApi();
+    setProducts(res.content);
+    setCategories(categoryItems.content);
+    console.log(categories);
+  };
   // 新增商品api
   const handleAddProduct = async () => {
+    if (!name) {
+      toast.warning("請輸入商品名稱");
+      return;
+    }
     try {
       const res = await productAddApi({
-        productName: name,
+        name: name,
         description: description,
-        category: category,
+        categoryId: category,
         price: price,
         quantity: quantity,
+        imageIds: [],
       });
       if (res.success) {
         toast.success("新增成功");
+        loadData();
       }
     } catch (error) {
       console.log(error);
@@ -61,14 +75,11 @@ export default function ProductManagePage() {
     }
   };
 
+  // 監聽列表
   useEffect(() => {
-    productListApi().then((res) => {
-      console.log(res);
-      setProducts(res.content);
-    });
+    loadData();
   }, []);
 
-  // const [products, setProducts] = useState<Product[]>(fakeProducts);
   const [editing, setEditing] = useState<Product | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
 
@@ -76,20 +87,32 @@ export default function ProductManagePage() {
     setEditing(item);
     setModalOpen(true);
   };
-
-  const handleSave = (updated: Product) => {
+  //更新商品
+  const handleSave = async (updated: Product) => {
     setProducts(products.map((p) => (p.name === updated.name ? updated : p)));
+    await updateProductApi(updated.id, updated);
+    loadData();
+  };
+  // 刪除商品
+  const handleDelete = async (id: string) => {
+    const { success } = await deleteProductApi(id);
+    if (success) {
+      toast.success("刪除成功");
+      loadData();
+    } else {
+      toast.error("刪除失敗");
+    }
   };
   return (
     <div className="ml-[2vw] max-w-[80vw]">
       <Table className="border-t border-gray-300 ">
-        <TableHeader className="">
+        <TableHeader>
           <TableRow>
             <TableHead>
-              <div>商品名稱</div>
+              <div className="w-30">商品名稱</div>
             </TableHead>
             <TableHead>
-              <div className="w-16">商品金額</div>
+              <div className="w-20">商品金額</div>
             </TableHead>
             <TableHead>
               <div className="w-30">商品分類</div>
@@ -132,9 +155,9 @@ export default function ProductManagePage() {
                 <SelectContent>
                   <SelectGroup>
                     <SelectLabel>分類</SelectLabel>
-                    {[...fakeType.entries()].map((item, key) => (
-                      <SelectItem key={key} value={item[0]}>
-                        {item[1]}
+                    {categories.map((item, key) => (
+                      <SelectItem key={key} value={item.id}>
+                        {item.name}
                       </SelectItem>
                     ))}
                   </SelectGroup>
@@ -177,12 +200,22 @@ export default function ProductManagePage() {
               <TableCell className="w-[100%]">{item.name}</TableCell>
               <TableCell className="w-[100%]">{item.price}</TableCell>
               <TableCell className="w-[100%]">
-                {fakeType.get(item.categoryId)}
+                {categories.find((catrgory) => {
+                  return item.categoryId === catrgory.id;
+                })?.name ?? "未知類別"}
               </TableCell>
               <TableCell>{item.description}</TableCell>
               <TableCell className="w-[100%]">{item.quantity}</TableCell>
-              <TableCell className="w-[100%]">
+              <TableCell className="flex w-40 justify-between">
                 <Button onClick={() => handleEdit(item)}>編輯</Button>
+                <Button
+                  variant="destructive"
+                  onClick={() => {
+                    handleDelete(item.id);
+                  }}
+                >
+                  刪除
+                </Button>
               </TableCell>
             </TableRow>
           ))}
@@ -191,7 +224,7 @@ export default function ProductManagePage() {
       <EditProductModal
         open={modalOpen}
         onClose={() => setModalOpen(false)}
-        product={editing}
+        product={editing!}
         onSave={handleSave}
       />
     </div>

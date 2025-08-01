@@ -2,7 +2,7 @@
 import { usePathname, useRouter } from "next/navigation";
 
 const items = [
-  { title: "Project", path: "/admin" },
+  { title: "Product", path: "/admin" },
   { title: "Member", path: "/admin/members" },
   { title: "Order", path: "/admin/orders" },
   { title: "Category", path: "/admin/categories" },
