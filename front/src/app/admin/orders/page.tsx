@@ -12,7 +12,6 @@ import { useEffect, useState } from "react";
 import OrderModal from "@/app/admin/_components/OrderModal";
 import { Order, SnapshotItem } from "@/types/orders";
 import { snapshotMapper } from "@/utils/snapshotMapper";
-import { Product } from "@/types/product";
 import { getOrders } from "@/apis/order";
 
 const fakeOrders = [
