@@ -63,6 +63,18 @@ export function getCategoriesListApi(): Promise<ListResponse<Category>> {
   });
 }
 
+export function insertCategoryApi(
+  categoryName: string,
+): Promise<DataResponse<Category>> {
+  return fetchClient({
+    method: "POST",
+    url: "/products/categories",
+    data: {
+      name: categoryName,
+    },
+  });
+}
+
 export function insertImageApi(
   imgFiles: FormData,
 ): Promise<DataResponse<{ imageId: string }>> {

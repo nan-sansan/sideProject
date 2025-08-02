@@ -200,8 +200,8 @@ export default function ProductManagePage() {
               <TableCell className="w-[100%]">{item.name}</TableCell>
               <TableCell className="w-[100%]">{item.price}</TableCell>
               <TableCell className="w-[100%]">
-                {categories.find((catrgory) => {
-                  return item.categoryId === catrgory.id;
+                {categories.find((category) => {
+                  return item.categoryId === category.id;
                 })?.name ?? "未知類別"}
               </TableCell>
               <TableCell>{item.description}</TableCell>

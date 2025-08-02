@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { useState, useEffect } from "react";
-import { getCategoriesListApi } from "@/apis/product";
+import { getCategoriesListApi, insertCategoryApi } from "@/apis/product";
 import { Category } from "@/types/product";
 import {
   Table,
@@ -14,6 +14,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { toast } from "sonner";
 
 export default function CategoryPage() {
   const [categories, setCategories] = useState<Category[]>([]);
@@ -23,6 +24,16 @@ export default function CategoryPage() {
   const getCategories = async () => {
     const res = await getCategoriesListApi();
     setCategories(res.content);
+  };
+
+  const handleAddCategory = async () => {
+    const res = await insertCategoryApi(categoryName);
+    if (res.success) {
+      toast.success("新增成功");
+      getCategories();
+    } else {
+      toast.error("新增失敗");
+    }
   };
 
   const handleEdit = (id: string) => {
@@ -62,7 +73,7 @@ export default function CategoryPage() {
               </Label>
             </TableCell>
             <TableCell>
-              <Button>新增</Button>
+              <Button onClick={handleAddCategory}>新增</Button>
             </TableCell>
           </TableRow>
           {categories.map((category) => (
