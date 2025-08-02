@@ -1,8 +1,8 @@
+"use client";
 import { useRef, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
-import { insertImageApi } from "@/apis/product";
 
 type Props = {
   imgs: string[];

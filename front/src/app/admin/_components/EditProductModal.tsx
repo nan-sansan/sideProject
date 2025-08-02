@@ -1,9 +1,10 @@
+"use client";
+
 import { useEffect, useState } from "react";
 import { Product } from "@/types/product";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
-import Image from "next/image";
 import ImageGalleryModal from "@/app/admin/_components/ImageGalleryModal";
 import { insertImageApi } from "@/apis/product";
 import { toast } from "sonner";
