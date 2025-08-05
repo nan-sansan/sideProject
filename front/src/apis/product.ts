@@ -31,10 +31,15 @@ export function productAddApi({
   });
 }
 
-export function productListApi(): Promise<ListResponse<Product>> {
+export function productListApi(
+  categoryId?: string,
+): Promise<ListResponse<Product>> {
   return fetchClient({
     method: "GET",
     url: "/products",
+    params: {
+      categoryId: categoryId,
+    },
   });
 }
 
@@ -72,6 +77,16 @@ export function insertCategoryApi(
     data: {
       name: categoryName,
     },
+  });
+}
+
+export function updateCategoryApi(
+  category: Category,
+): Promise<DataResponse<Category>> {
+  return fetchClient({
+    method: "PUT",
+    url: "/products/categories/" + category.id,
+    data: { name: category.name },
   });
 }
 

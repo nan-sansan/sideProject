@@ -4,7 +4,11 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { useState, useEffect } from "react";
-import { getCategoriesListApi, insertCategoryApi } from "@/apis/product";
+import {
+  getCategoriesListApi,
+  insertCategoryApi,
+  updateCategoryApi,
+} from "@/apis/product";
 import { Category } from "@/types/product";
 import {
   Table,
@@ -17,13 +21,19 @@ import {
 import { toast } from "sonner";
 
 export default function CategoryPage() {
-  const [categories, setCategories] = useState<Category[]>([]);
+  const [originCategories, setOriginCategories] = useState<Category[]>([]);
+  const [clonedCategories, setClonedCategories] = useState<Category[]>([]);
   const [categoryName, setCategoryName] = useState("");
   const [editTarget, setEditTarget] = useState<string[]>([]);
 
+  const deepClone = <T extends object>(obj: T) => {
+    return JSON.parse(JSON.stringify(obj)) as T;
+  };
+
   const getCategories = async () => {
     const res = await getCategoriesListApi();
-    setCategories(res.content);
+    setOriginCategories(deepClone(res.content));
+    setClonedCategories(res.content);
   };
 
   const handleAddCategory = async () => {
@@ -40,8 +50,24 @@ export default function CategoryPage() {
     setEditTarget([...editTarget, id]);
   };
 
-  const handleSave = (id: string) => {
+  // 取消修改
+  const handleCancel = (id: string, index: number) => {
     setEditTarget(editTarget.filter((item) => item !== id));
+    clonedCategories[index].name = originCategories[index].name;
+    setClonedCategories(deepClone(clonedCategories));
+  };
+
+  // 儲存分類
+  const handleSave = async (category: Category, index: number) => {
+    const { success } = await updateCategoryApi(category);
+    if (!success) {
+      toast.error("修改失敗");
+      return;
+    }
+    toast.success("修改成功");
+    setEditTarget(editTarget.filter((item) => item !== category.id));
+    originCategories[index].name = clonedCategories[index].name;
+    setOriginCategories(deepClone(originCategories));
   };
 
   useEffect(() => {
@@ -76,20 +102,41 @@ export default function CategoryPage() {
               <Button onClick={handleAddCategory}>新增</Button>
             </TableCell>
           </TableRow>
-          {categories.map((category) => (
+          {clonedCategories.map((category, index) => (
             <TableRow key={category.id}>
               <TableCell>
-                <div>{category.name}</div>
+                {editTarget.includes(category.id) ? (
+                  <Input
+                    value={category.name}
+                    onChange={(e) => {
+                      clonedCategories[index].name = e.target.value;
+
+                      setClonedCategories([...clonedCategories]);
+                    }}
+                  />
+                ) : (
+                  <div>{category.name}</div>
+                )}
               </TableCell>
               <TableCell>
                 {editTarget.includes(category.id) ? (
-                  <Button
-                    onClick={() => {
-                      handleSave(category.id);
-                    }}
-                  >
-                    儲存
-                  </Button>
+                  <>
+                    <Button
+                      onClick={() => {
+                        handleSave(category, index);
+                      }}
+                    >
+                      儲存
+                    </Button>
+                    <Button
+                      className="ml-5"
+                      onClick={() => {
+                        handleCancel(category.id, index);
+                      }}
+                    >
+                      取消
+                    </Button>
+                  </>
                 ) : (
                   <Button
                     onClick={() => {

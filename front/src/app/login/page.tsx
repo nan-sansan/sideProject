@@ -3,10 +3,8 @@
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
-import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { useAuthStore } from "@/stores/authStore";
-import { jwtDecode } from "jwt-decode";
 import { useUserInfo } from "@/hooks/useUserInfo";
 
 export default function LoginPage() {

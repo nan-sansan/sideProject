@@ -1,7 +1,6 @@
 import { create } from "zustand/react";
 import { loginApi } from "@/apis/auth";
 import { persist } from "zustand/middleware";
-import { useRouter } from "next/navigation";
 
 type AuthState = {
   accessToken: string | null;
