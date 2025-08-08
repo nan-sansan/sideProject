@@ -7,7 +7,7 @@ type Props = {
   searchParams: Promise<{ category: string | undefined }>;
 };
 
-export default async function ProductPage({ searchParams }: Props) {
+export default async function ProductListPage({ searchParams }: Props) {
   const params = await searchParams;
   const categoryId = params.category;
   const { content: products } = await productListApi(categoryId);

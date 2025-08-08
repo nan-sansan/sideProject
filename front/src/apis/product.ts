@@ -61,6 +61,15 @@ export function deleteProductApi(productId: string): Promise<BaseResponse> {
   });
 }
 
+export function getProductWithId(
+  productId: string,
+): Promise<DataResponse<Product>> {
+  return fetchClient({
+    method: "GET",
+    url: "/products/" + productId,
+  });
+}
+
 export function getCategoriesListApi(): Promise<ListResponse<Category>> {
   return fetchClient({
     method: "GET",

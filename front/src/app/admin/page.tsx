@@ -48,7 +48,6 @@ export default function ProductManagePage() {
     const categoryItems = await getCategoriesListApi();
     setProducts(res.content);
     setCategories(categoryItems.content);
-    console.log(categories);
   };
   // 新增商品api
   const handleAddProduct = async () => {
