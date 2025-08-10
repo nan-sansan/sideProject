@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import MemberCenter from "@/components/MemberCenter";
 
 export default function Header() {
   return (
@@ -32,7 +33,7 @@ export default function Header() {
           </ul>
           <div className="member-area flex gap-5">
             <div className="nav-cart">
-              <Link href="#">
+              <Link href="/cart">
                 <Image
                   src="/assest/cart.png"
                   alt="購物車"
@@ -42,14 +43,7 @@ export default function Header() {
               </Link>
             </div>
             <div className="nav-user">
-              <Link href="#">
-                <Image
-                  src="/assest/member.png"
-                  alt="會員"
-                  width={24}
-                  height={24}
-                />
-              </Link>
+              <MemberCenter />
             </div>
           </div>
         </nav>

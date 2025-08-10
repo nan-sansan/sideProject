@@ -35,7 +35,6 @@ export default function QuantityBar({ productId }: { productId: string }) {
       <Button
         className="w-20 h-8 mt-4 hover:bg-gray-600 "
         onClick={() => {
-          console.log(productId);
           add(productId, quantity);
           toast.success("加入成功");
         }}
