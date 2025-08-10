@@ -21,7 +21,9 @@ export const useCartStore = create<CartState>()(
           const item = items.find((item) => item.productId === productId);
           if (item) {
             item.quantity += quantity;
-            setState([...items, { productId, quantity }]);
+            setState({
+              items: [...items, { productId, quantity }],
+            });
           } else {
             setState({
               items: [...items, { productId, quantity }],
