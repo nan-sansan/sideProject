@@ -1,5 +1,5 @@
 "use client";
-import { productListApi } from "@/apis/product";
+import { getProductListByCategoryApi } from "@/apis/product";
 import { useEffect, useState } from "react";
 import { Product } from "@/types/product";
 import ProductCard from "@/app/(front)/product/_component/ProductCard";
@@ -12,7 +12,7 @@ export default function RecommendList({
   const [recommend, setRecommend] = useState<Product[]>();
 
   const getProductList = async (currentId: string) => {
-    const { content: products } = await productListApi();
+    const { content: products } = await getProductListByCategoryApi();
 
     const filtered = products.filter(
       (product, index, self) =>

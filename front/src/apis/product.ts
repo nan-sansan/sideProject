@@ -31,7 +31,7 @@ export function productAddApi({
   });
 }
 
-export function productListApi(
+export function getProductListByCategoryApi(
   categoryId?: string,
 ): Promise<ListResponse<Product>> {
   return fetchClient({
@@ -67,6 +67,16 @@ export function getProductWithId(
   return fetchClient({
     method: "GET",
     url: "/products/" + productId,
+  });
+}
+
+export function getProductNameById(
+  productIds: string[],
+): Promise<ListResponse<Product>> {
+  return fetchClient({
+    method: "GET",
+    url: "/products",
+    params: { productIds: productIds.join(",") },
   });
 }
 

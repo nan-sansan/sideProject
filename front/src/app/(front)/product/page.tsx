@@ -1,4 +1,7 @@
-import { getCategoriesListApi, productListApi } from "@/apis/product";
+import {
+  getCategoriesListApi,
+  getProductListByCategoryApi,
+} from "@/apis/product";
 import ProductCard from "@/app/(front)/product/_component/ProductCard";
 import { Product } from "@/types/product";
 import CategoryBar from "@/app/(front)/product/_component/Categorybar";
@@ -10,7 +13,7 @@ type Props = {
 export default async function ProductListPage({ searchParams }: Props) {
   const params = await searchParams;
   const categoryId = params.category;
-  const { content: products } = await productListApi(categoryId);
+  const { content: products } = await getProductListByCategoryApi(categoryId);
   const { content: categories } = await getCategoriesListApi();
 
   return (

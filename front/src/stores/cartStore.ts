@@ -5,7 +5,8 @@ type CartState = {
   items: { productId: string; quantity: number }[];
   add: (productId: string, quantity: number) => void;
   set: (productId: string, quantity: number) => void;
-  removeItem: (product: string) => void;
+  removeItem: (productId: string) => void;
+  removeAll: () => void;
 };
 
 export const useCartStore = create<CartState>()(
@@ -22,7 +23,7 @@ export const useCartStore = create<CartState>()(
           if (item) {
             item.quantity += quantity;
             setState({
-              items: [...items, { productId, quantity }],
+              items: [...items],
             });
           } else {
             setState({
@@ -32,12 +33,26 @@ export const useCartStore = create<CartState>()(
         },
         set: (productId, quantity) => {
           const { items } = getState();
+          if (quantity <= 0) {
+            setState({
+              items: items.filter((item) => item.productId !== productId),
+            });
+            return;
+          }
+
           const item = items.find((item) => item.productId === productId);
           if (item) {
-            item.quantity -= quantity;
+            item.quantity = quantity;
+            setState({ items: [...items] });
           }
         },
-        removeItem: () => {
+        removeItem: (productId) => {
+          const { items } = getState();
+          setState({
+            items: items.filter((item) => item.productId !== productId),
+          });
+        },
+        removeAll: () => {
           setState({ items: [] });
         },
       };

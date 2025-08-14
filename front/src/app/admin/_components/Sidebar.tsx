@@ -1,5 +1,7 @@
 "use client";
 import { usePathname, useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import { useAuthStore } from "@/stores/authStore";
 
 const items = [
   { title: "Product", path: "/admin" },
@@ -11,6 +13,7 @@ const items = [
 export default function Sidebar() {
   const pathname = usePathname();
   const router = useRouter();
+  const { logout } = useAuthStore();
 
   return (
     <div className="w-[200px] h-full bg-gray-300 text-white p-4 space-y-2">
@@ -27,6 +30,14 @@ export default function Sidebar() {
           {item.title}
         </div>
       ))}
+      <Button
+        variant="destructive"
+        onClick={() => {
+          logout();
+        }}
+      >
+        登出
+      </Button>
     </div>
   );
 }

@@ -4,8 +4,8 @@ export type Order = {
   snapshot: string;
   total: number;
   status: string;
-  comments: string | null;
+  comment: string;
 };
 
 export type SnapshotItem = { price: number; name: string; quantity: number };
-export type OrderStatus = "PENDING" | "SHIPPED" | "CANCELED";
+export type OrderStatus = "PENDING" | "SHIPPED" | "CANCEL";

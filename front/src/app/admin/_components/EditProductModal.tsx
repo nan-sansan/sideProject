@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import ImageGalleryModal from "@/app/admin/_components/ImageGalleryModal";
 import { insertImageApi } from "@/apis/product";
 import { toast } from "sonner";
+import { Label } from "@/components/ui/label";
 
 type Props = {
   open: boolean;
@@ -62,17 +63,27 @@ export default function EditProductModal({
             )}
             onImageFileChange={setImgFiles}
           />
+          <Label>商品名稱</Label>
           <Input
             className="border p-2 w-full"
             value={temp.name}
             onChange={(e) => setTemp({ ...temp, name: e.target.value })}
           />
+          <Label>商品價錢</Label>
           <Input
             className="border p-2 w-full"
             type="number"
             value={temp.price}
             onChange={(e) => setTemp({ ...temp, price: +e.target.value })}
           />
+          <Label>商品庫存</Label>
+          <Input
+            className="border p-2 w-full"
+            type="number"
+            value={temp.quantity}
+            onChange={(e) => setTemp({ ...temp, quantity: +e.target.value })}
+          />
+          <Label>商品描述</Label>
           <Textarea
             className="border p-2 w-full"
             value={temp.description}

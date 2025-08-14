@@ -1,8 +1,13 @@
+"use client";
 import Image from "next/image";
 import Link from "next/link";
 import MemberCenter from "@/components/MemberCenter";
-
+import { useUserInfo } from "@/hooks/useUserInfo";
+import { Button } from "@/components/ui/button";
+import { useAuthStore } from "@/stores/authStore";
 export default function Header() {
+  const { role } = useUserInfo();
+  const { logout } = useAuthStore();
   return (
     <>
       <header className="bg-[var(--main-color)] fixed top-0 w-full z-999">
@@ -45,6 +50,18 @@ export default function Header() {
             <div className="nav-user">
               <MemberCenter />
             </div>
+            {role != "" ? (
+              <Button
+                variant="destructive"
+                onClick={() => {
+                  logout();
+                }}
+              >
+                登出
+              </Button>
+            ) : (
+              <></>
+            )}
           </div>
         </nav>
       </header>

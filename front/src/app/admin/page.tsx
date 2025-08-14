@@ -23,7 +23,7 @@ import {
   deleteProductApi,
   getCategoriesListApi,
   productAddApi,
-  productListApi,
+  getProductListByCategoryApi,
   updateProductApi,
 } from "@/apis/product";
 import { Category, Product } from "@/types/product";
@@ -44,7 +44,7 @@ export default function ProductManagePage() {
 
   // 列表資料請求
   const loadData = async () => {
-    const res = await productListApi();
+    const res = await getProductListByCategoryApi();
     const categoryItems = await getCategoriesListApi();
     setProducts(res.content);
     setCategories(categoryItems.content);

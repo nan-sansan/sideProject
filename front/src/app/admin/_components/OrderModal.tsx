@@ -14,6 +14,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { updateOrderApi } from "@/apis/order";
+import { toast } from "sonner";
 
 type Props = {
   open: boolean;
@@ -29,10 +31,17 @@ export default function OrderModal({
   onSaveAction,
 }: Props) {
   const [temp, setTemp] = useState<Order | null>(order);
+
   useEffect(() => {
     setTemp(order);
   }, [order]);
+
   if (!open || !temp) return null;
+
+  const updateOrder = async (orderId: string, item: Order) => {
+    const { success } = await updateOrderApi(orderId, item);
+    if (success) toast.success("儲存成功");
+  };
 
   return (
     <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center ">
@@ -62,7 +71,11 @@ export default function OrderModal({
         <div className="flex justify-between">
           <div>訂單狀態：{temp.status}</div>
           <Label htmlFor="status">
-            <Select>
+            <Select
+              onValueChange={(value: string) => {
+                setTemp({ ...temp, status: value });
+              }}
+            >
               <SelectTrigger>
                 <SelectValue placeholder="訂單狀態" />
               </SelectTrigger>
@@ -71,7 +84,7 @@ export default function OrderModal({
                   <SelectLabel>狀態選擇</SelectLabel>
                   <SelectItem value="PENDING">未出貨</SelectItem>
                   <SelectItem value="SHIPPED">已出貨</SelectItem>
-                  <SelectItem value="CANCELED">取消</SelectItem>
+                  <SelectItem value="CANCEL">取消</SelectItem>
                 </SelectGroup>
               </SelectContent>
             </Select>
@@ -83,9 +96,9 @@ export default function OrderModal({
           <Textarea
             id="comment"
             className="border p-2 w-full"
-            value={temp.comments === null ? "" : temp.comments}
+            value={temp.comment === null ? "" : temp.comment}
             onChange={(e) => {
-              setTemp({ ...temp, comments: e.target.value });
+              setTemp({ ...temp, comment: e.target.value });
             }}
           />
         </div>
@@ -102,6 +115,7 @@ export default function OrderModal({
           <Button
             className="px-4 py-1 rounded"
             onClick={() => {
+              updateOrder(temp.id!, temp);
               onSaveAction(temp);
               onCloseAction();
             }}
